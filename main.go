@@ -20,6 +20,7 @@ import (
 //name (COM PORT), baud, time_out
 func main() {
 
+	fmt.Println("Test")
 	ticker := time.NewTicker(10 * time.Minute)
 	go func() {
 		for  range ticker.C{
