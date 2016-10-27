@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
-	"github.com/joaquinicolas/newsReader/config"
 	"github.com/joaquinicolas/newsReader/rs-232-port"
 	"github.com/joaquinicolas/newsReader/server"
 	"github.com/joaquinicolas/newsReader/sqlite"
@@ -19,7 +18,6 @@ import (
 //name (COM PORT), baud, time_out
 func main() {
 
-	fmt.Println("Test")
 	ticker := time.NewTicker(10 * time.Minute)
 	go func() {
 		for range ticker.C {
@@ -37,6 +35,11 @@ func main() {
 	})
 	http.HandleFunc("/novedades", server.GetOnly(server.HandleNews))
 
-	http.ListenAndServe(strconv.Itoa(config.ReadConfig().Port), nil)
+	http.ListenAndServe(":8080", nil)
 	fmt.Println("Listening on port 8080.")
+
+}
+
+func hello(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "Hello world!")
 }
