@@ -77,6 +77,8 @@ func Store(values string) int64 {
 	return rowsAffected
 }
 
+// Read News from database
+// return New array or empty New array if the query no has rows
 func Read()  []*New {
 	sql := `
 	SELECT data,checkin,checkout FROM news;

@@ -1,34 +1,57 @@
 package server
 
 import (
-	"net/http"
-	"github.com/joaquinicolas/newsReader/sqlite"
-	"encoding/json"
-	"net"
 	"bytes"
-	"github.com/joaquinicolas/newsReader/config"
+	"encoding/json"
+	"fmt"
+	"net"
+	"net/http"
+
+	"github.com/joaquinicolas/NewsReader/sqlite"
 )
 
-func HandleNews(w http.ResponseWriter,r *http.Request)  {
+// HandleNews asdasdasdasdas
+func HandleNews(w http.ResponseWriter, r *http.Request) {
 	data := sqlite.Read()
-	result,_ := json.Marshal(data)
-	w.Header().Set("Content-Type","application/json")
+	result, _ := json.Marshal(data)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(result)
 }
 
+//PostNews send news to server
+func PostNews(msg string) {
+	if msg == "" {
+		return
+	}
+	json := []byte(fmt.Sprintf("{'Mac':'%s','Data':'%s'}", getMAC(), msg))
+	req, _ := http.NewRequest("POST", "169.254.7.16:9090/News", bytes.NewBuffer(json))
+	req.Header.Set("Content-Type", "application/json")
 
-//Post to server that raspberry is online
-func PostAlive()  {
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	defer resp.Body.Close()
+}
+
+//PostAlive notify to server that
+func PostAlive() {
+
 	mac := getMAC()
+	fmt.Println(mac)
 	if mac == nil {
 		return
 	}
-	json := []byte(`{"MAC":"` + mac.String() + `"}`)
-	req, err := http.NewRequest("POST",config.ReadConfig().RemoteServer,bytes.NewBuffer(json))
-	req.Header.Set("Content-Type","application/json")
+
+	//131.255.5.183
+	json := []byte(`{"Mac":"` + mac.String() + `"}`)
+	req, _ := http.NewRequest("POST", "169.254.7.16:9090/Alive", bytes.NewBuffer(json))
+	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
-	resp,err := client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
@@ -36,9 +59,9 @@ func PostAlive()  {
 
 }
 
-func getMAC() net.HardwareAddr{
-	interfaces,_ := net.Interfaces()
-	for _,i := range interfaces{
+func getMAC() net.HardwareAddr {
+	interfaces, _ := net.Interfaces()
+	for _, i := range interfaces {
 		if i.HardwareAddr != nil {
 
 			return i.HardwareAddr

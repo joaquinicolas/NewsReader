@@ -1,9 +1,13 @@
 {
-	"ImportPath": "github.com/joaquinicolas/newsReader",
+	"ImportPath": "github.com/joaquinicolas/NewsReader",
 	"GoVersion": "go1.7",
-	"GodepVersion": "v74",
+	"GodepVersion": "v75",
 	"Deps": [
-
+		{
+			"ImportPath": "github.com/mattn/go-sqlite3",
+			"Comment": "v1.1.0-78-gb5c99a7",
+			"Rev": "b5c99a720374818b629fd1fbf6d2cbb4fb9a5644"
+		},
 		{
 			"ImportPath": "github.com/tarm/serial",
 			"Rev": "37be519d49878d0098e34fb614136b81e6c87861"
