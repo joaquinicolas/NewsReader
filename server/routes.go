@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/joaquinicolas/NewsReader/sqlite"
+	"log"
 )
 
 // HandleNews asdasdasdasdas
@@ -23,16 +24,17 @@ func PostNews(msg string) {
 	if msg == "" {
 		return
 	}
-	json := []byte(fmt.Sprintf("{'Mac':'%s','Data':'%s'}", getMAC(), msg))
-	req, _ := http.NewRequest("POST", "169.254.7.16:9090/News", bytes.NewBuffer(json))
+	values := map[string]string{"Mac":getMAC().String(),"Data":msg}
+	json,_ := json.Marshal(values)
+	req, _ := http.NewRequest("POST", "http://131.255.5.183:9090/News", bytes.NewBuffer(json))
 	req.Header.Set("Content-Type", "application/json")
-
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
+	fmt.Println("Post Request /News finished!")
 	defer resp.Body.Close()
 }
 
@@ -46,15 +48,18 @@ func PostAlive() {
 	}
 
 	//131.255.5.183
-	json := []byte(`{"Mac":"` + mac.String() + `"}`)
-	req, _ := http.NewRequest("POST", "169.254.7.16:9090/Alive", bytes.NewBuffer(json))
+	values := map[string]string{"Mac": mac.String()}
+	json,_ := json.Marshal(values)
+	fmt.Println(json)
+	req, _ := http.NewRequest("POST", "http://131.255.5.183:9090/Alive", bytes.NewBuffer(json))
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+	fmt.Println("Post request /Alive finished!")
 	defer resp.Body.Close()
 
 }
